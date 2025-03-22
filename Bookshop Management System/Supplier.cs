@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Data;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Bookshop
 {
@@ -11,7 +12,7 @@ namespace Bookshop
         {
             InitializeComponent();
         }
-        public int SupplierID;
+        public string SupplierID;
         SqlConnection con = new SqlConnection("Data Source=.;Initial Catalog=BookStoreManagement;Integrated Security=True;TrustServerCertificate=True");
         private void Supplier_Load(object sender, EventArgs e)
         {
@@ -20,8 +21,9 @@ namespace Bookshop
         }
         private void ResetFormControls()
         {
-            SupplierID = 0;
-            textBox2.Clear();
+            SupplierID = null;
+            textBox2.Text = GenerateNextSupplierID();
+            textBox2.ReadOnly = true;
             textBox3.Clear();
             textBox4.Clear();
             textBox6.Clear();
@@ -31,7 +33,6 @@ namespace Bookshop
 
         private void GetSupplierRecords()
         {
-
             SqlCommand cmd = new SqlCommand("Select * from SuppliersTb", con);
             DataTable dt = new DataTable();
             con.Open();
@@ -81,17 +82,43 @@ namespace Bookshop
         }
         private void SuppliersRecordsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            SupplierID = Convert.ToInt32(SuppliersRecordsDataGridView.SelectedRows[0].Cells[0].Value);
-            textBox2.Text = SuppliersRecordsDataGridView.SelectedRows[0].Cells[0].Value.ToString();
-            textBox3.Text = SuppliersRecordsDataGridView.SelectedRows[0].Cells[1].Value.ToString();
-            textBox4.Text = SuppliersRecordsDataGridView.SelectedRows[0].Cells[2].Value.ToString();
-            textBox6.Text = SuppliersRecordsDataGridView.SelectedRows[0].Cells[3].Value.ToString();
-            textBox8.Text = SuppliersRecordsDataGridView.SelectedRows[0].Cells[4].Value.ToString();
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = SuppliersRecordsDataGridView.Rows[e.RowIndex];
+
+                SupplierID = row.Cells[0].Value?.ToString(); // Lấy mã ID thật sự (VD: SUP1)
+
+                textBox2.Text = SupplierID;
+                textBox3.Text = row.Cells[1].Value?.ToString();
+                textBox4.Text = row.Cells[2].Value?.ToString();
+                textBox6.Text = row.Cells[3].Value?.ToString();
+                textBox8.Text = row.Cells[4].Value?.ToString();
+            }
+        }
+
+        private string GenerateNextSupplierID()
+        {
+            string prefix = "SUP";
+            string nextID = prefix + "1";
+
+            SqlCommand cmd = new SqlCommand("SELECT MAX(CAST(SUBSTRING(Supplier_ID, 4, LEN(Supplier_ID)) AS INT)) FROM SuppliersTb", con);
+            con.Open();
+            object result = cmd.ExecuteScalar();
+            con.Close();
+
+            if (result != DBNull.Value && result != null)
+            {
+                int number = Convert.ToInt32(result);
+                number++;
+                nextID = prefix + number.ToString();
+            }
+
+            return nextID;
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            if (SupplierID > 0)
+            if (!string.IsNullOrEmpty(SupplierID))
             {
                 SqlCommand cmd = new SqlCommand("DELETE FROM SuppliersTb WHERE Supplier_ID = @ID", con);
                 cmd.CommandType = CommandType.Text;
@@ -105,12 +132,12 @@ namespace Bookshop
             }
             else
             {
-                MessageBox.Show("Please Select A Supplier Records To Delete.", "Select?", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please Select A Supplier Record To Delete.", "Select?", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void Button2_Click(object sender, EventArgs e)
         {
-            if (SupplierID > 0)
+            if (!string.IsNullOrEmpty(SupplierID))
             {
                 try
                 {
@@ -125,7 +152,7 @@ namespace Bookshop
                     con.Open();
                     cmd.ExecuteNonQuery();
                     con.Close();
-                    MessageBox.Show("Stock Updated Sucessfully", "Updated", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Supplier  Updated Sucessfully", "Updated", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     GetSupplierRecords();
                     ResetFormControls();
                 }
@@ -136,7 +163,7 @@ namespace Bookshop
             }
             else
             {
-                MessageBox.Show("Please Select A Stock To Update Its Information.", "Select?", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please Select A Supplier  To Update Its Information.", "Select?", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

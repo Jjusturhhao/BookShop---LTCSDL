@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -68,6 +69,18 @@ namespace Bookshop
         {
             ReturnedOrders r1 = new ReturnedOrders();
             r1.Show();
+        }
+
+        private void btnAuthors_Click(object sender, EventArgs e)
+        {
+            Authors authors = new Authors();
+            authors.Show();
+        }
+
+        private void button8_Click_1(object sender, EventArgs e)
+        {
+            Categories categories = new Categories();
+            categories.Show();
         }
     }
 }
