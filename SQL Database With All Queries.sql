@@ -199,3 +199,4 @@ CREATE TABLE SuppliersTb(
 	SELECT Orders.Order_ID, Users.Name, Orders.Order_Date
 	FROM Users	
 	FULL JOIN Orders ON Orders.Customer_ID=Users.User_ID;
+
