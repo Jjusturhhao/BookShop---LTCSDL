@@ -7,6 +7,16 @@ GO
 
 
 --BOOKSHOP MANAGEMENT SYSTEM
+CREATE TABLE BookCategory (
+    CategoryID VARCHAR(10) PRIMARY KEY,
+    CategoryName NVARCHAR(100) NOT NULL
+);
+	INSERT INTO BookCategory (CategoryID, CategoryName) VALUES 
+		('CAT1', N'Tiểu thuyết'),
+		('CAT2', N'Sách nước ngoài'),
+		('CAT3', N'Kinh tế'),
+		('CAT4', N'Thiếu nhi');
+
 
 CREATE TABLE SuppliersTb(
 		Supplier_ID VARCHAR (55)NOT NULL,
@@ -36,10 +46,12 @@ CREATE TABLE SuppliersTb(
 	--3
 	delete FROM SuppliersTb WHERE Supplier_ID = 'SUP10';
 
+
 	create table StockTb(
 		StockID VARCHAR(50) PRIMARY KEY,
 		SupplierID VARCHAR(55) FOREIGN KEY REFERENCES SuppliersTb(Supplier_ID),
 		BookID VARCHAR(50) NOT NULL,
+		CategoryID VARCHAR(10) FOREIGN KEY REFERENCES BookCategory(CategoryID),
 		AuthorName VARCHAR(50) NOT NULL,
 		BookName VARCHAR(50) NOT NULL,
 		PublisherName VARCHAR(50) NOT NULL,
@@ -47,16 +59,16 @@ CREATE TABLE SuppliersTb(
 		Price int NOT NULL
 	);
 
-	INSERT INTO StockTb VALUES('STK1','SUP1','BOOK1','J.R.R Tolken','The Hobbit','Allen & Unwin','1937', 1100);
-	INSERT INTO StockTb VALUES('STK2','SUP1','BOOK2','Tanith Lee','The Castle of Dark','Macmilla','1930', 1200);
-	INSERT INTO StockTb VALUES('STK3','SUP2','BOOK3','Tanith Lee','The Winter Players','Macmilla','1977', 1300);
-	INSERT INTO StockTb VALUES('STK4','SUP2','BOOK4','Anne Rice','Tale of the Thief','Penguin','2016', 1400);
-	INSERT INTO StockTb VALUES('STK5','SUP3','BOOK5','J.R.R Tolken','The Lord of the Rings : Fellowship of the ring','Allen & Unwin','1937', 1500);
-	INSERT INTO StockTb VALUES('STK6','SUP3','BOOK6','Mark Stevenson','Prince and the Pauper','American Pushlishing Co','2011', 1600);
-	INSERT INTO StockTb VALUES('STK7','SUP4','BOOK7','Ribbly Scott','Alien','Morpheus','1996', 1700);
-	INSERT INTO StockTb VALUES('STK8','SUP4','BOOK8','James Clavell','Gone Girl','Paramount','2015', 1800);
-	INSERT INTO StockTb VALUES('STK9','SUP5','BOOK9','Megan Miranda','All the Missing Girls','H & R','2016', 1900);
-	INSERT INTO StockTb VALUES('STK10','SUP6','BOOK10','Sarah Mass','Empire of Storms','Pearson Plc','2006', 2000);
+	INSERT INTO StockTb VALUES('STK1','SUP1','BOOK1','CAT2','J.R.R Tolken','The Hobbit','Allen & Unwin','1937', 1100);
+	INSERT INTO StockTb VALUES('STK2','SUP1','BOOK2','CAT2','Tanith Lee','The Castle of Dark','Macmilla','1930', 1200);
+	INSERT INTO StockTb VALUES('STK3','SUP2','BOOK3','CAT2','Tanith Lee','The Winter Players','Macmilla','1977', 1300);
+	INSERT INTO StockTb VALUES('STK4','SUP2','BOOK4','CAT2','Anne Rice','Tale of the Thief','Penguin','2016', 1400);
+	INSERT INTO StockTb VALUES('STK5','SUP3','BOOK5','CAT2','J.R.R Tolken','The Lord of the Rings : Fellowship of the ring','Allen & Unwin','1937', 1500);
+	INSERT INTO StockTb VALUES('STK6','SUP3','BOOK6','CAT2','Mark Stevenson','Prince and the Pauper','American Pushlishing Co','2011', 1600);
+	INSERT INTO StockTb VALUES('STK7','SUP4','BOOK7','CAT2','Ribbly Scott','Alien','Morpheus','1996', 1700);
+	INSERT INTO StockTb VALUES('STK8','SUP4','BOOK8','CAT2','James Clavell','Gone Girl','Paramount','2015', 1800);
+	INSERT INTO StockTb VALUES('STK9','SUP5','BOOK9','CAT2','Megan Miranda','All the Missing Girls','H & R','2016', 1900);
+	INSERT INTO StockTb VALUES('STK10','SUP6','BOOK10','CAT2','Sarah Mass','Empire of Storms','Pearson Plc','2006', 2000);
 	SELECT * FROM StockTb
 
 	--1
@@ -80,13 +92,11 @@ CREATE TABLE SuppliersTb(
     Role VARCHAR(30) CHECK (Role IN ('Customer', 'Staff', 'Admin')) NOT NULL DEFAULT 'Customer'
 );
 
-
 -- Admin: Không cần nhập Address và PhoneNumber
 	INSERT INTO Users (User_ID, Name, Username, Password, Email, Role) 
 	VALUES 
 	('A1', N'Ngọc Hân', 'Lele', '123', 'lele@gmail.com', 'Admin'),
 	('A2',N'Hoàn Hảo', 'Hao', '123', 'hhao@gmail.com', 'Admin');
-
 
 -- Manager, Customer: Cần nhập Address và PhoneNumber
 	INSERT INTO Users (User_ID, Name, Username, Password, Email, Address, PhoneNumber, Role) 
@@ -98,7 +108,6 @@ CREATE TABLE SuppliersTb(
 	('C2',N'Hân Hân', 'hhan', '456', 'hhan@gmail.com', N'Nhà Bè', '0987654322', 'Customer'),
 	('C3',N'Mỹ Diên', 'Dien', '456', 'mdien@gmail.com', N'Nhà Bè', '0987654323', 'Customer');
 
-	
 
 	CREATE TABLE Orders (
     Order_ID VARCHAR(55) NOT NULL PRIMARY KEY, -- Nếu cần Order_ID là mã chuỗi
