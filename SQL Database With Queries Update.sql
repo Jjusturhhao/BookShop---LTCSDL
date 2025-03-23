@@ -1,4 +1,6 @@
-﻿-- New TABLE AUTHOR
+Use BookStoreManagement
+Go
+-- New TABLE AUTHOR
 CREATE TABLE Author (
     AuthorID INT PRIMARY KEY IDENTITY(1,1),
     AuthorName NVARCHAR(100) NOT NULL,
@@ -57,8 +59,13 @@ ALTER TABLE StockTb
 ADD CONSTRAINT FK_StockTb_Supplier
 FOREIGN KEY (Supplier_ID) REFERENCES SuppliersTb(Supplier_ID);
 
+SELECT name 
+FROM sys.foreign_keys 
+WHERE parent_object_id = OBJECT_ID('StockTb');
+
+
 ALTER TABLE StockTb
-DROP CONSTRAINT FK__StockTb__Supplie__398D8EEE;
+DROP CONSTRAINT FK__StockTb__Supplie__267ABA7A;
 
 ALTER TABLE StockTb
 DROP COLUMN SupplierID;
@@ -87,6 +94,8 @@ INSERT INTO BookCategory (CategoryID, CategoryName) VALUES
 	('CAT2', N'Sách nước ngoài'),
 	('CAT3', N'Kinh tế'),
 	('CAT4', N'Thiếu nhi');
+
+Select * from Stocktb;
 
 -- Gán CAT2 (sách nước ngoài) cho BOOK1 đến BOOK10
 UPDATE StockTb
