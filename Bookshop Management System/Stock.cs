@@ -19,7 +19,8 @@ namespace Bookshop
             //{
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO StockTb (StockID, SupplierID, BookID, CategoryID, AuthorName,  BookName, PublisherName, PublishedYear, Price) VALUES (@StockID, @SupplierID, @BookID, @BookName, @PublisherName, @PublishedYear, @Price)", con);
+                    SqlCommand cmd = new SqlCommand("INSERT INTO StockTb (StockID, SupplierID, BookID, CategoryID, AuthorName,  BookName, PublisherName, PublishedYear, Price, Quantity ) " +
+                        "VALUES (@StockID, @SupplierID, @BookID, @CategoryID, @AuthorName, @BookName, @PublisherName, @PublishedYear, @Price, @Quantity)", con);
                     cmd.CommandType = CommandType.Text;
                     string newStockID = GenerateNextStockID();
                     cmd.Parameters.AddWithValue("@StockID", newStockID);
@@ -31,6 +32,7 @@ namespace Bookshop
                     cmd.Parameters.AddWithValue("@PublisherName", textBox6.Text);
                     cmd.Parameters.AddWithValue("@PublishedYear", textBox7.Text);
                     cmd.Parameters.AddWithValue("@Price", textBox8.Text);
+                    cmd.Parameters.AddWithValue("@Quantity", textBox2.Text);
                     con.Open();
                     cmd.ExecuteNonQuery();
                     con.Close();
@@ -41,6 +43,14 @@ namespace Bookshop
                 catch (Exception Ex)
                 {
                     MessageBox.Show(Ex.Message);
+                }
+                finally
+                {
+                    // Đảm bảo kết nối luôn được đóng sau khi thực hiện xong
+                    if (con.State == ConnectionState.Open)
+                    {
+                        con.Close();
+                    }
                 }
             //}
         }
@@ -61,7 +71,7 @@ namespace Bookshop
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("UPDATE StockTb SET SupplierID = @SupplierID, BookID = @BookID, CategoryID = @CategoryID, AuthorName = @AuthorName,  BookName = @BookName, PublisherName = @PublisherName, PublishedYear = @PublishedYear, Price = @Price WHERE StockID = @ID", con);
+                    SqlCommand cmd = new SqlCommand("UPDATE StockTb SET SupplierID = @SupplierID, BookID = @BookID, CategoryID = @CategoryID, AuthorName = @AuthorName,  BookName = @BookName, PublisherName = @PublisherName, PublishedYear = @PublishedYear, Quantity = @Quantity, Price = @Price WHERE StockID = @ID", con);
                     cmd.CommandType = CommandType.Text;
                     cmd.Parameters.AddWithValue("@StockID", textBox1.Text);
                     cmd.Parameters.AddWithValue("@SupplierID", comboBoxSupplier.SelectedValue.ToString());
@@ -72,6 +82,7 @@ namespace Bookshop
                     cmd.Parameters.AddWithValue("@PublisherName", textBox6.Text);
                     cmd.Parameters.AddWithValue("@PublishedYear", textBox7.Text);
                     cmd.Parameters.AddWithValue("@Price", textBox8.Text);
+                    cmd.Parameters.AddWithValue("@Quantity", textBox2.Text);
                     cmd.Parameters.AddWithValue("@ID", this.StockID);
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -125,7 +136,7 @@ namespace Bookshop
         private void GetStockRecords()
         {
             SqlCommand cmd = new SqlCommand(
-                "SELECT s.StockID, sup.Supplier_name, s.BookID, c.CategoryName, s.AuthorName, s.BookName, s.PublisherName, s.PublishedYear, s.Price " +
+                "SELECT s.StockID, sup.Supplier_name, s.BookID, c.CategoryName, s.AuthorName, s.BookName, s.PublisherName, s.PublishedYear, s.Price, s.Quantity " +
                 "FROM StockTb s " +
                 "JOIN SuppliersTb sup ON s.SupplierID = sup.Supplier_ID " +
                 "JOIN BookCategory c ON s.CategoryID = c.CategoryID", con);
@@ -193,6 +204,7 @@ namespace Bookshop
             textBox6.Clear();
             textBox7.Clear();
             textBox8.Clear();
+            textBox2.Clear();
             textBox1.Focus();
         }
 
@@ -211,25 +223,26 @@ namespace Bookshop
                 textBox6.Text = row.Cells[6].Value.ToString(); 
                 textBox7.Text = row.Cells[7].Value.ToString();
                 textBox8.Text = row.Cells[8].Value.ToString();
+                textBox2.Text = row.Cells[9].Value.ToString();
             }
         }
 
         private void Button3_Click(object sender, EventArgs e)
         {
-            if(!string.IsNullOrEmpty(StockID))
+            if (!string.IsNullOrEmpty(StockID))
             {
                 SqlCommand cmd = new SqlCommand("DELETE FROM StockTb WHERE StockID = @ID", con);
                 cmd.CommandType = CommandType.Text;
-
+               
                 cmd.Parameters.AddWithValue("@ID", this.StockID);
                 con.Open();
                 cmd.ExecuteNonQuery();
                 con.Close();
                 MessageBox.Show("Stock Deleted Sucessfully", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                GetStockRecords();
-                ResetFormControls();
-            }
+                        GetStockRecords();
+                        ResetFormControls();
+                    } 
             else
             {
                 MessageBox.Show("Please Select A Stock To Delete.", "Select?", MessageBoxButtons.OK, MessageBoxIcon.Error);

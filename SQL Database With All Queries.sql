@@ -209,3 +209,19 @@ CREATE TABLE SuppliersTb(
 	FROM Users	
 	FULL JOIN Orders ON Orders.Customer_ID=Users.User_ID;
 
+	--Add  Quantity
+	ALTER TABLE StockTb
+	ADD Quantity INT CHECK (Quantity > 150);
+
+	UPDATE StockTb SET Quantity = 200 WHERE StockID = 'STK1';
+	UPDATE StockTb SET Quantity = 250 WHERE StockID = 'STK2';
+	UPDATE StockTb SET Quantity = 205 WHERE StockID = 'STK3';
+	UPDATE StockTb SET Quantity = 220 WHERE StockID = 'STK4';
+	UPDATE StockTb SET Quantity = 175 WHERE StockID = 'STK5';
+	UPDATE StockTb SET Quantity = 243 WHERE StockID = 'STK6';
+	UPDATE StockTb SET Quantity = 267 WHERE StockID = 'STK7';
+	UPDATE StockTb SET Quantity = 251 WHERE StockID = 'STK8';
+	UPDATE StockTb SET Quantity = 225 WHERE StockID = 'STK9';
+	UPDATE StockTb SET Quantity = 220 WHERE StockID = 'STK10';
+
+	SELECT * FROM StockTb
